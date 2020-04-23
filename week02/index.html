@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第二周</title>
+</head>
+<body>
+  <h2>第一题</h2>
+  <input class="number-input" type="text" placeholder="请输入数字">
+  <button class="number-button">确定</button>
+  <span class="number-result">暂无</span>
+</body>
+<script>
+  // 第一题
+  let numberInput = document.querySelector('.number-input');
+  let numberButton = document.querySelector(".number-button");
+  let numberResult = document.querySelector('.number-result');
+
+  numberButton.addEventListener('click', function (e) {
+    console.log(numberInput.value);
+    let number = numberInput.value;
+    numberSyntax(number)
+  })
+  document.addEventListener('keydown', function(e) {
+    if (e.keyCode === 13) {
+      let number = numberInput.value;
+      numberSyntax(number)
+    }
+  })
+  /*
+    匹配所有 Number 直接量
+    1、十进制
+      - 0
+      - 有无小数点
+      - 有无e
+    2、二进制
+      - 是否以 0b、0B 开头
+    3、八进制
+      - 是否以 0o、0O 开头
+    4、十六进制
+      - 是否以 0x、0X 开头
+   */
+  function numberSyntax(number) {
+    console.log(number);
+    console.log(typeof number);
+    // /(0|[1-9](\d+)\.\d+)([eE][+-]?\d+)?|\.\d+([eE][+-]\d+)?|(0|[1-9]([0-9]+)?)([eE][+-]?[0-9]+)?/.test(number)
+    if (/0[bB][01]/.test(number)) {  // 二进制
+      numberResult.innerText = '这是一个二进制'
+    } else if (/0[oO][0-7]+/.test(number)) {  // 8进制
+      numberResult.innerText = '这是一个八进制'
+    } else if (/0[xX][[0-9]a-fA-F]/) {  // 16进制
+      numberResult.innerText = '这是一个十六进制'
+    } else if (/([1-9]([0-9]+)?)\.([0-9]+)?([eE][+-]?[0-9]+)?|\.[0-9]+([eE][+-]?[0-9]+)?|(0|[1-9]([0-9]+)?)([eE][+-]?[0-9]+)?/.test(number)) {  // 十进制
+      numberResult.innerText = '这是一个十进制'
+    } else {
+      // 识别不出
+      numberResult.innerText = '请确认是否输入有误！'
+    }
+  }
+</script>
+</html>
