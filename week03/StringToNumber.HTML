@@ -1,6 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+
+</body>
 <script>
-  function convertStringToNumber(string) {
-    var chars = string.split('');
-    
+  function convertStringToNumber(string, x) {
+    let chars = string.split('');
+    let number = 0;
+    let ZEROCODEPOINT = '0'.codePointAt(0);
+    let i = 0;
+
+    while (i < chars.length && chars[i] != '.' && chars[i] != 'e' && chars[i] != 'E') {
+      number *= x
+      number += chars[i].codePointAt(0) - ZEROCODEPOINT
+      i++
+    }
+
+    // . 
+    if (chars[i] == '.') {
+      i++
+    }
+    let fraction = 1;
+    while (i < chars.length && chars[i] != 'e' && chars[i] != 'E') {
+      fraction /= x
+      number += (chars[i].codePointAt(0) - ZEROCODEPOINT) * fraction
+      i++
+    }
+
+    // E/e
+    if (chars[i] == 'e' || chars[i] == 'E') {
+      i++
+    }
+    let eNUM = 0;
+    let pow = 1;
+    while (i < chars.length) {
+      eNUM += (chars[i].codePointAt(0) - ZEROCODEPOINT) * 10;
+      pow = Math.pow(10, eNUM)
+      i++
+    }
+    return number * pow;
   }
+  console.log(convertStringToNumber('12.01e10', 10));
+  console.log(convertStringToNumber('12', 10));
+  console.log(convertStringToNumber('.2', 10));
+  console.log(convertStringToNumber('0.2', 10));
 </script>
+
+</html>

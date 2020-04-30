@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  
+</body>
+<script>
+  function convertNumberToString (number, hex) {
+    // 精度
+    const maxFractionLength = 10
+    var integer = Math.floor(number);
+    var fraction = number - integer;
+    console.log(fraction);
+    var string = '', fractionString = '';
+
+    while(integer > 0) {
+      string = String(integer % hex) + string;
+      integer = Math.floor(integer / hex);
+    }
+
+    while((fraction !== 1 || fraction !== 0) && fractionString.length <= maxFractionLength) {
+      const computed = fraction * hex;
+      const integer = computed > 1 ? Math.floor(computed) : 0;
+      fractionString += integer
+      fraction = computed > 1 ? computed - Math.floor(computed) : fraction
+    }
+    return fraction ? `${string}.${fractionString}` : string
+  }
+  console.log(convertNumberToString(12.645, 10));
+</script>
+</html>
