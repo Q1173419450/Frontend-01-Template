@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JavaScript 内置对象</title>
+</head>
+
+<body>
+  <div id="container"></div>
+  <script src="https://gw.alipayobjects.com/os/antv/pkg/_antv.g6-3.3.1/dist/g6.min.js"></script>
+</body>
+<script>
+  calculationList()
+
+  function calculationList() {
+    let globalObj = [
+      "Infinity",
+      "NaN",
+      "undefined",
+      "null",
+      // "globalThis",
+      "eval",
+      "uneval",
+      "isFinite",
+      "isNaN",
+      "parseFloat",
+      "parseInt",
+      "decodeURI",
+      "decodeURIComponent",
+      "encodeURI",
+      "encodeURIComponent",
+      "Object",
+      "Function",
+      "Boolean",
+      "Symbol",
+      "Error",
+      "AggregateError",
+      "EvalError",
+      "InternalError",
+      "RangeError",
+      "ReferenceError",
+      "SyntaxError",
+      "TypeError",
+      "URIError",
+      "Number",
+      "BigInt",
+      "Math",
+      "Date",
+      "String",
+      "RegExp",
+      "Array",
+      "Int8Array",
+      "Uint8Array",
+      "Uint8ClampedArray",
+      "Int16Array",
+      "Uint16Array",
+      "Int32Array",
+      "Uint32Array",
+      "Float32Array",
+      "Float64Array",
+      "BigInt64Array",
+      "BigUint64Array",
+      "Map",
+      "Set",
+      "WeakMap",
+      "WeakSet",
+      "ArrayBuffer",
+      "SharedArrayBuffer",
+      "Atomics",
+      "DataView",
+      "JSON",
+      "Promise",
+      "Generator",
+      "GeneratorFunction",
+      "AsyncFunction",
+      "Iterator",
+      "AsyncIterator",
+      "Reflect",
+      "Proxy",
+      "Intl",
+      "WebAssembly",
+    ]
+
+    var set = new Set();
+    var queue = [];
+    var current = [];
+    var currentObj;
+
+    for (let p of globalObj) {
+      queue.push({
+        path: [p],
+        object: this[p]
+      })
+    }
+
+    for (let p of globalObj) {
+      if (this[p]) {
+        current.push(DFS(this[p], [p]));
+      } else {
+        current.push({
+          id: p,
+        })
+      }
+    }
+    // 深度优先搜索
+    function DFS(obj, path) {
+      if (set.has(obj)) return null;
+      set.add(obj);
+      let newObj = {
+        id: path.join('.'),
+        children: []
+      }
+      let children = [];
+
+      if (obj != undefined) {
+        for (let p of Object.getOwnPropertyNames(obj)) {
+          let property = Object.getOwnPropertyDescriptor(obj, p)
+          let newPath = path.concat([p])
+          if (property.hasOwnProperty('value') &&
+            property.value != null &&
+            property.value instanceof Object
+          ) {
+            let o = DFS(property.value, newPath)
+            o && children.push(o)
+          }
+          if (property.hasOwnProperty('get') && typeof property.get == 'function') {
+            let o = DFS(property.value, newPath)
+            o && children.push(o)
+          }
+          if (property.hasOwnProperty('set') && typeof property.set == 'function') {
+            let o = DFS(property.value, newPath)
+            o && children.push(o)
+          }
+        }
+      }
+      newObj.children = children
+      return newObj
+    }
+
+    // 广度优先搜索
+    function BFS(queue) {
+      while (queue.length) {
+        currentObj = queue.shift()
+        if (set.has(currentObj.object)) continue;
+        set.add(currentObj.object);
+        console.log('current', currentObj)
+        if (currentObj.object != undefined) {
+          for (let p of Object.getOwnPropertyNames(currentObj.object)) {
+            let property = Object.getOwnPropertyDescriptor(currentObj.object, p);
+            if (property.hasOwnProperty('value') &&
+              property.value != null &&
+              property.value instanceof Object
+            ) {
+              queue.push({
+                object: property.value,
+                path: currentObj.path.concat([p])
+              })
+            }
+
+            if (property.hasOwnProperty('get') && typeof property.get == 'function') {
+              queue.push({
+                object: property.get,
+                path: currentObj.path.concat([p])
+              })
+            }
+
+            if (property.hasOwnProperty('set') && typeof property.set == 'function') {
+              queue.push({
+                object: property.set,
+                path: currentObj.path.concat([p])
+              })
+            }
+          }
+        }
+      }
+    }
+
+    BFS(queue)
+    draw(current);
+  }
+
+  function draw(current) {
+    const width = document.getElementById('container').scrollWidth;
+    const height = document.getElementById('container').scrollHeight || 800;
+    const graph = new G6.TreeGraph({
+      container: 'container',
+      width,
+      height,
+      modes: {
+        default: [{
+            type: 'collapse-expand',
+            onChange: function onChange(item, collapsed) {
+              const data = item.get('model').data;
+              data.collapsed = collapsed;
+              return true;
+            },
+          },
+          'drag-canvas',
+          'zoom-canvas',
+        ],
+      },
+      defaultNode: {
+        size: 26,
+        anchorPoints: [
+          [0, 0.5],
+          [1, 0.5],
+        ],
+        style: {
+          fill: '#C6E5FF',
+          stroke: '#5B8FF9',
+        },
+      },
+      defaultEdge: {
+        type: 'cubic-horizontal',
+        style: {
+          stroke: '#A3B1BF',
+        },
+      },
+      layout: {
+        type: 'mindmap',
+        direction: 'H',
+        getHeight: () => {
+          return 16;
+        },
+        getWidth: () => {
+          return 16;
+        },
+        getVGap: () => {
+          return 10;
+        },
+        getHGap: () => {
+          return 50;
+        },
+        getSide: () => {
+          return 'right'
+        },
+      },
+    })
+
+    let centerX = 0;
+    graph.node(function (node) {
+      if (node.id === 'Modeling Methods') {
+        centerX = node.x;
+      }
+      return {
+        label: node.id,
+        labelCfg: {
+          position: node.children && node.children.length > 0 ?
+            'left' :
+            node.x > centerX ?
+            'right' :
+            'left',
+          offset: 5,
+        },
+      }
+    })
+    graph.data({
+      id: 'Global',
+      children: current
+    })
+    graph.render()
+    graph.fitView()
+  }
+</script>
+
+</html>

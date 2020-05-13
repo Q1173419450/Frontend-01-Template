@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  
+</body>
+<script>
+  
+// var set = new Set();
+// var objects = [
+//     eval,
+//     isFinite,
+//     isNaN,
+//     parseFloat,
+//     parseInt,
+//     decodeURI,
+//     decodeURIComponent,
+//     encodeURI,
+//     encodeURIComponent,
+//     Array,
+//     Date,
+//     RegExp,
+//     Promise,
+//     Proxy,
+//     Map,
+//     WeakMap,
+//     Set,
+//     WeakSet,
+//     Function,
+//     Boolean,
+//     String,
+//     Number,
+//     Symbol,
+//     Object,
+//     Error,
+//     EvalError,
+//     RangeError,
+//     ReferenceError,
+//     SyntaxError,
+//     TypeError,
+//     URIError,
+//     ArrayBuffer,
+//     SharedArrayBuffer,
+//     DataView,
+//     Float32Array,
+//     Float64Array,
+//     Int8Array,
+//     Int16Array,
+//     Int32Array,
+//     Uint8Array,
+//     Uint16Array,
+//     Uint32Array,
+//     Uint8ClampedArray,
+//     Atomics,
+//     JSON,
+//     Math,
+//     Reflect];
+// objects.forEach(o => set.add(o));
+// // 统计数量和路径？
+
+// for(var i = 0; i < objects.length; i++) {
+//     var o = objects[i]
+//     for(var p of Object.getOwnPropertyNames(o)) {
+//         var d = Object.getOwnPropertyDescriptor(o, p)
+//         if( (d.value !== null && typeof d.value === "object") || (typeof d.value === "function"))
+//             if(!set.has(d.value))
+//                 set.add(d.value), objects.push(d.value);
+//         if( d.get )
+//             if(!set.has(d.get))
+//                 set.add(d.get), objects.push(d.get);
+//         if( d.set )
+//             if(!set.has(d.set))
+//                 set.add(d.set), objects.push(d.set);
+//     }
+// }
+
+/* ------------------------------------------------------------------------------------------------------------ */
+
+// var set = new Set();
+// var queue = [
+//     eval,
+//     isFinite,
+//     isNaN,
+//     parseFloat,
+//     parseInt,
+//     decodeURI,
+//     decodeURIComponent,
+//     encodeURI,
+//     encodeURIComponent,
+//     Array,
+//     Date,
+//     RegExp,
+//     Promise,
+//     Proxy,
+//     Map,
+//     WeakMap,
+//     Set,
+//     WeakSet,
+//     Function,
+//     Boolean,
+//     String,
+//     Number,
+//     Symbol,
+//     Object,
+//     Error,
+//     EvalError,
+//     RangeError,
+//     ReferenceError,
+//     SyntaxError,
+//     TypeError,
+//     URIError,
+//     ArrayBuffer,
+//     SharedArrayBuffer,
+//     DataView,
+//     Float32Array,
+//     Float64Array,
+//     Int8Array,
+//     Int16Array,
+//     Int32Array,
+//     Uint8Array,
+//     Uint16Array,
+//     Uint32Array,
+//     Uint8ClampedArray,
+//     Atomics,
+//     JSON,
+//     Math,
+//     Reflect];
+
+// let current;
+
+// while(queue.length) {
+//     current = queue.shift();
+//     // 去除重复的对象
+//     if(set.has(current))
+//       continue;
+//     set.add(current)
+//     console.log(set);
+//     // console.log(current);
+
+//     // 返回一个由指定对象的所有自身属性的属性名（包括不可枚举属性但不包括Symbol值作为名称的属性）组成的数组。
+//     if (current != undefined) {
+//       console.log(current);
+//       for(let p of Object.getOwnPropertyNames(current)) {
+//         console.log(p);
+//         // 返回指定对象上一个自有属性对应的属性描述符。
+//         let property = Object.getOwnPropertyDescriptor(current, p);
+//         // console.log(property);
+//         if (property.hasOwnProperty('value') && property.value instanceof Object) {
+//           queue.push(property.value)
+//         }
+//         if (property.hasOwnProperty('get')) {
+//           queue.push(property.get);
+//         }
+  
+//         if (property.hasOwnProperty('set')) {
+//           queue.push(property.set);
+//         }
+//       }
+//     }
+// }
+
+/* -------------------------------------------------------------------------------------------------------------- */
+var set = new Set();
+var globalProperties = [
+    // "AggregateError",
+    "AsyncFunction",
+    "AsyncIterator",
+    "Iterator",
+    "Generator",
+    "GeneratorFunction",
+    "Infinity",
+    "eval",
+    "isFinite",
+    "isNaN",
+    "parseFloat",
+    "parseInt",
+    "decodeURI",
+    "decodeURIComponent",
+    "encodeURI",
+    "encodeURIComponent",
+    "Array",
+    "Date",
+    "RegExp",
+    "Promise",
+    "Proxy",
+    "Map",
+    "WeakMap",
+    "Set",
+    "WeakSet",
+    "Function",
+    "Boolean",
+    "String",
+    "Number",
+    "Symbol",
+    "Object",
+    "Error",
+    "EvalError",
+    "RangeError",
+    "ReferenceError",
+    "InternalError",
+    "SyntaxError",
+    "TypeError",
+    "URIError",
+    "ArrayBuffer",
+    "SharedArrayBuffer",
+    "DataView",
+    "Float32Array",
+    "Float64Array",
+    "Int8Array",
+    "Int16Array",
+    "Int32Array",
+    "Uint8Array",
+    "Uint16Array",
+    "Uint32Array",
+    "Uint8ClampedArray",
+    "Atomics",
+    "JSON",
+    "Math",
+    "Reflect",
+    "BigInt",
+    "BigInt64Array",
+    "BigUint64Array",
+    "Intl",
+    "Intl.Collator",
+    "Intl.DateTimeFormat",
+    "Intl.DisplayNames",
+    "Intl.ListFormat",
+    "Intl.Locale",
+    "Intl.NumberFormat",
+    "Intl.PluralRules",
+    "Intl.RelativeTimeFormat",
+];
+
+var queue = [];
+
+for (var p of globalProperties) {
+  // console.log(p);
+  queue.push({
+    path: [p],
+    object: this[p]
+  })
+}
+
+let current;
+
+while(queue.length) {
+  current = queue.shift()
+  console.log(current.path.join('.'));
+  if (set.has(current.object)) {
+    continue
+  }
+  set.add(current.object);
+  // console.log(typeof JSON);
+  for(let p of Object.getOwnPropertyNames(current.object)) {
+    var property = Object.getOwnPropertyDescriptor(current.object, p);
+    // console.log(p);
+    console.log(typeof property.get);
+    // debugger;
+    if (property.hasOwnProperty('value') && 
+        property.value != null && 
+        typeof property.value == 'object' && 
+        property.value instanceof Object
+    ) {
+      queue.push({
+        path: current.path.concat([p]),
+        object: property.value
+      })
+    }
+    if (property.hasOwnProperty('get') && typeof property.get == 'function') {
+      queue.push({
+        path: current.path.concat([p]),
+        object: property.get
+      })
+    }
+    if (property.hasOwnProperty('set') && typeof property.set == 'function') {
+      queue.push({
+        path: current.path.concat([p]),
+        object: property.set
+      })
+    }
+  }
+}
+
+/* ----------------------------------------------------- */
+
+// var a = {};
+// Object.getPrototypeOf(a) === Object.prototype // true
+
+// var iframe = document.createElement('iframe')
+// document.body.appendChild(iframe)
+// iframe.contentWindow
+// iframe.contentWindow.Object.prototype
+// iframe.contentWindow.eval('this.o = {}')
+// var o = iframe.contentWindow.o;
+// Object.getPrototypeOf(o) === Object.prototype // false
+</script>
+</html>
