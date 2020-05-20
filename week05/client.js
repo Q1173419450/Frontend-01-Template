@@ -116,6 +116,7 @@ class ResponseParser {
       } else {
         this.statusline += char;
       }
+      
     } else if (this.current === this.WAITING_STATUS_LINE_END) {
       if (char === '\n') {
         this.current = this.WAITING_HEADER_NAME;
