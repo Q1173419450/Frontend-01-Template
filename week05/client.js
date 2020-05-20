@@ -1,4 +1,6 @@
 const net = require('net');
+const parser = require('./parser.js');
+
 
 class Request {
   // method， url = host + port + path
@@ -64,10 +66,6 @@ ${this.bodyText}`
     })
   }
 }
-
-// class Response {
-
-// }
 
 class ResponseParser {
   constructor() {
@@ -178,18 +176,19 @@ class ThunkedBodyParser {
   }
   receiveChar(char) {
     // console.log(JSON.stringify(char))
-    if (!this.isFinished) {
+    // if (!this.isFinished) {
       if (this.current === this.WAITING_LENGTH) {
         if (char === '\r') {
           if (this.length === 0) {
             console.log('/////////////////////');
-            console.log(this.content)
+            // console.log(this.content)
             this.isFinished = true;
           }
           this.current = this.WAITING_LENGTH_LINE_END;
         } else {
-          this.length *= 10;
-          this.length += char.charCodeAt(0) - '0'.charCodeAt(0);
+          this.length *= 16;
+          // this.length += char.charCodeAt(0) - '0'.charCodeAt(0);
+          this.length += parseInt(char, 16)
         }
       } else if (this.current === this.WAITING_LENGTH_LINE_END) {
         if (char === '\n') {
@@ -197,7 +196,7 @@ class ThunkedBodyParser {
         }
       } else if (this.current === this.READING_THUNK) {
         this.content.push(char)
-        this.length --;
+        this.length -- ;
         if (this.length === 0) {
           this.current = this.WAITING_NEW_LINE;
         }
@@ -210,7 +209,7 @@ class ThunkedBodyParser {
           this.current = this.WAITING_LENGTH
         }
       }
-    }
+    // }
   }
 }
 
@@ -230,6 +229,9 @@ void async function () {
 
   let response = await request.send();
   console.log(response);
+
+  let dom = parser.parserHTML(response.body);
+  console.log(dom);
 }();
 
 
