@@ -47,7 +47,7 @@ function matchStr(str, patten) {
       m++
     } else if (n > 0) { // 不匹配则, 模式索引往前移动 pmt[n - 1]
       n = pmt[n - 1]
-    } else {
+    } else {  // 如果 n 第一个也匹配不上则为 -1 ，则 m 只移动一位
       m ++;
     }
   }

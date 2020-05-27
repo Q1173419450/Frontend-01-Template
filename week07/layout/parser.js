@@ -1,6 +1,7 @@
-// const cssRule = require('./cssRules.js');
 const EOF = Symbol('EOF') // EOF: End of File
 const css = require('css');
+
+const layout = require('./layout.js')
 
 let currentToken = null;   // 标签
 let currentAttribute = null;  // 属性
@@ -10,7 +11,7 @@ let rules = [];
 let stack = [{type: 'document', children: []}]; // 构造 DOM 树
 
 function cssRules (text) {  // 收集rules 规则
-  console.log(text);
+  // console.log(text);
   let ast = css.parse(text);
   // console.log(JSON.stringify(ast, null, "     "));
   rules.push(...ast.stylesheet.rules);
@@ -162,6 +163,8 @@ function emit(token) {
       if (top.tagName === 'style') {
         cssRules(top.children[0].content);
       }
+
+      layout(top);
       stack.pop();
     }
     currentTextNode == null
@@ -176,7 +179,7 @@ function emit(token) {
     currentTextNode.content += token.content;
   }
 
-  console.log(token)
+  // console.log(token)
 }
 
 function data(current) {
@@ -206,7 +209,11 @@ function tagOpen(current) {
     }
     return tagName(current) // reconsume 将当前词传到下一个状态
   } else {
-    return ;
+    emit({
+      type: 'text',
+      content: current
+    })
+    return;
   }
 }
 
@@ -273,14 +280,14 @@ function attributeName(current) {
 }
 
 function beforeAttributeValue(current) {
-  if (current.match(/^[\t\n\f]$/) || current == '/' || current == '>' || current == EOF) {
+  if (current.match(/^[\t\n\f ]$/) || current == '/' || current == '>' || current == EOF) {
     return beforeAttributeValue;
   } else if (current == '\"') {
     return doubleQuotedAttributeValue;
   } else if (current == '\'') {
     return singleQuotedAttributeValue;
   } else if (current == '>') {
-
+    return data;
   } else {
     return UnquotedAttributeValue(current);
   }
@@ -338,7 +345,7 @@ function afterAttributeName(current) {
 }
 
 function afterQuotedAttributeValue(current) {
-  if (current.match(/^[\t\n\f]$/)) {
+  if (current.match(/^[\t\n\f ]$/)) {
     return beforeAttributeName;
   } else if (current == '/') {
     return selfClosingStartTag
