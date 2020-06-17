@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TicTacpatten</title>
+  <style>
+    .item {
+      display: inline-block;
+      width: 100px;
+      height: 100px;
+      line-height: 100px;
+      border: 1px solid #fff;
+      background: green;
+      vertical-align: middle;
+      text-align: center;
+      font-size: 30px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="box"></div>
+</body>
+<script>
+  // let patten = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+  let patten = [
+    [0, 0, 0],
+    [0, 0, 0],
+    [0, 0, 0],
+  ];
+
+  // let patten = [ bastchiose = -1
+  //   [1, 2, 0],
+  //   [0, 1, 0],
+  //   [1, 0, 2],
+  // ];
+
+  let color = 1;
+  let isWin = false;
+
+  /* 布局 */
+  function show() {
+    let box = document.getElementById('box');
+
+    box.innerHTML = '';
+
+    for (let i = 0; i < patten.length; i++) {
+      for (let j = 0; j < patten.length; j++) {
+        let item = document.createElement('div');
+        item.innerText =
+          patten[i][j] == 2 ? "❌" :
+          patten[i][j] == 1 ? "⭕️" :
+          "";
+        if (!isWin && patten[i][j] == 0) {
+          item.addEventListener("click", () => move(j, i))
+        }
+        item.classList.add('item');
+        box.appendChild(item);
+      }
+      let br = document.createElement('br');
+      box.appendChild(br)
+    }
+  }
+
+  /* 落子 */
+  function move(x, y) {
+    patten[y][x] = color;
+    if (check(patten, color)) {
+      isWin = check(patten, color);
+      console.log(color == 2 ? "❌ is winner" : "⭕️ is winner")
+    }
+    
+    color = 3 - color;
+    show();
+
+    computerMove();
+
+    if (willWin(patten, color)) {
+      console.log(color == 2 ? "❌ will winner" : "⭕️ will winner")
+    }
+  }
+
+  /* AI */
+  function computerMove() {
+    let choice = bestChoice(patten, color);
+
+    if (choice.point) {
+      patten[choice.point[1]][choice.point[0]] = color;
+    }
+
+    color = 3 - color;
+
+    show()
+  }
+
+  /* 胜负 8种情况 */
+  function check(patten, color) {
+    /* 竖线 */
+    for (let i = 0; i < 3; i++) {
+      let win = true;
+      for (let j = 0; j < 3; j++) {
+        if (patten[i][j] !== color) {
+          win = false;
+        }
+      }
+      if (win) {
+        return true
+      }
+    }
+
+    /* 横向 */
+    for (let i = 0; i < 3; i++) {
+      let win = true;
+      for (let j = 0; j < 3; j++) {
+        if (patten[j][i] !== color) {
+          win = false;
+        }
+      }
+      if (win) {
+        return true
+      }
+    }
+
+    /* 交叉向 */
+    {
+      let win = true;
+      for (let j = 0; j < 3; j++) {
+        if (patten[j][j] !== color) {
+          win = false;
+        }
+      }
+      if (win) {
+        return true
+      }
+    }
+
+    {
+      let win = true;
+      for (let j = 0; j < 3; j++) {
+        if (patten[j][2 - j] !== color) {
+          win = false;
+        }
+      }
+      if (win) {
+        return true
+      }
+    }
+
+    return false
+  }
+
+  function clone(patten) {
+    return JSON.parse(JSON.stringify(patten));
+  }
+
+  /* 判断要赢了 */
+  function willWin(patten, color) {
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        if (patten[i][j]) {
+          continue;
+        }
+
+        let tmp = clone(patten);  // 克隆一个对象来判断要赢的情况
+        tmp[i][j] = color;
+        if (check(tmp, color)) {
+          return [j, i];
+        }
+      }
+    }
+    return null
+  }
+
+  // let openings = new Map();
+
+  // openings.set([
+  //   [0, 0, 0],
+  //   [0, 0, 0],
+  //   [0, 0, 0],
+  // ].toString() + '1', {
+  //   point: [1, 1],
+  //   result: 0
+  // })
+
+  // openings.set([
+  //   [0, 0, 0],
+  //   [0, 1, 0],
+  //   [0, 0, 0],
+  // ].toString() + '2', {
+  //   point: [0, 0],
+  //   result: 0
+  // })
+
+  function bestChoice(patten, color) {  // 最好的选择
+
+    if (openings.has(patten.toString() + color)) {
+      return openings.get(patten.toString() + color);
+    }
+
+    let point = willWin(patten, color);
+    if (point) {  // 要赢、退出条件
+      return {
+        point: point,
+        result: 1
+      }
+    }
+
+    let result = -1;
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        if (patten[i][j]) {
+          continue;
+        }
+
+        let tmp = clone(patten);
+        tmp[i][j] = color;
+        let opp = bestChoice(tmp, 3 - color);
+        if (- opp.result >= result) {   // 对面最坏的情况，就是我最好的情况
+          point = [j, i];
+          result = -opp.result; 
+        }
+      }
+    }
+
+    return {
+      point: point,
+      result: point ? result : 0
+    }
+    
+  }
+
+  show()
+</script>
+
+</html>
