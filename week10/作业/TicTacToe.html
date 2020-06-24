@@ -67,6 +67,7 @@
   /* 落子 */
   function move(x, y) {
     patten[y][x] = color;
+    console.log(check(patten, color))
     if (check(patten, color)) {
       isWin = check(patten, color);
       console.log(color == 2 ? "❌ is winner" : "⭕️ is winner")
@@ -88,6 +89,11 @@
 
     if (choice.point) {
       patten[choice.point[1]][choice.point[0]] = color;
+    }
+
+    if (check(patten, color)) {
+      isWin = check(patten, color);
+      console.log(color == 2 ? "❌ is winner" : "⭕️ is winner")
     }
 
     color = 3 - color;
@@ -195,9 +201,9 @@
 
   function bestChoice(patten, color) {  // 最好的选择
 
-    if (openings.has(patten.toString() + color)) {
-      return openings.get(patten.toString() + color);
-    }
+    // if (openings.has(patten.toString() + color)) {
+    //   return openings.get(patten.toString() + color);
+    // }
 
     let point = willWin(patten, color);
     if (point) {  // 要赢、退出条件

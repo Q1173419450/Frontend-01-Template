@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>红绿灯问题</title>
+  <style>
+
+    .box {
+      display: flex;
+      align-items: center;
+    }
+
+    .red, .green, .yellow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100px;
+      height: 100px;
+      margin: 10px;
+      border-radius: 50%;
+      background: gray;
+    }
+
+    .red.light {
+      background: red;
+    }
+
+    .green.light {
+      background: green;
+    }
+
+    .yellow.light {
+      background: yellow;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div class="green"></div>
+    <div class="yellow"></div>
+    <div class="red"></div>
+  </div>
+  <button id="btn">切换</button>
+</body>
+<script>
+  let light = document.getElementsByClassName('box')[0].children;
+  let button = document.getElementById('btn');
+  let _time;
+  
+  function green() {
+    for(let i = 0; i < light.length; i++) {
+      light[i].classList.remove('light');
+    }
+    light[0].classList.add('light');
+  }
+
+  function yellow() {
+    for(let i = 0; i < light.length; i++) {
+      light[i].classList.remove('light');
+    }
+    light[1].classList.add('light');
+  }
+
+  function red() {
+    for(let i = 0; i < light.length; i++) {
+      light[i].classList.remove('light');
+    }
+    light[2].classList.add('light');
+  }
+
+  /* 
+    green 10s
+    yellow 2s
+    red 5s
+   */
+  async function trafficLights() {
+    while(true) {
+      green()
+      await sleep(3);
+      yellow()
+      await sleep(3);
+      red()
+      await sleep(3);
+    }
+  }
+
+  async function btnChange() {
+    while(true) {
+      green()
+      await eventListient(button, 'click')
+      yellow()
+      await eventListient(button, 'click')
+      red()
+      await eventListient(button, 'click')
+    }
+  }
+
+  function eventListient(selector, event) {
+    return new Promise((resolve) => {
+      selector.addEventListener(event, () => {
+        stop();
+        resolve()
+      });
+    })
+  }
+
+  function stop() {
+    clearTimeout(_time);
+  }
+
+  function sleep(time = 1) {
+    return new Promise((resolve, reject) => {
+      _time = setTimeout(resolve, time * 1000)
+    })
+  }
+
+  trafficLights();
+  btnChange();
+</script>
+</html>

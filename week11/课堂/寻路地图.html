@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>寻路</title>
+  <style>
+    html {
+      font-size: 0;
+    }
+
+    .cell {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      line-height: 6px;
+      background-color: gray;
+      border-bottom: solid 1px white;
+      border-right: solid 1px white;
+      vertical-align: middle;
+    }
+
+    #container {
+      width: 701px;
+    }
+  </style>
+</head>
+<div id="container"></div>
+<button id="btn">save图像</button>
+<button id="delete">delete图像</button>
+<body>
+</body>
+<script>
+  /* 
+    mousedown
+    mouseover
+    mouseup
+   */
+
+  // var map = new Array(100001).join(0).split('').map(s => Number(s));
+  let map = localStorage.map ? JSON.parse(localStorage.map) : new Array(10000).fill(0); // 初始化图表
+  let container = document.getElementById('container');
+  let mouse = false;
+  let clear = false;
+  document.addEventListener('mousedown', (e) => { // 鼠标左键画图、右键橡皮擦
+    // event.which || event.keyCode; // event.keyCode 用于 IE8 及更早版本
+    mouse = true
+    clear = (e.which === 3)
+  });
+  document.addEventListener('mouseup', () => mouse = false);  // 鼠标松开事件
+  document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+  function show() { // 渲染图像
+    let fragment = document.createDocumentFragment();
+    for (let y = 0; y < 100; y++) {
+      for (let x = 0; x < 100; x++) {
+        let cell = document.createElement('div');
+        cell.classList.add('cell');
+        if (map[y * 100 + x] == 1) {
+          cell.style.backgroundColor = 'black';
+        }
+        cell.addEventListener('mouseover', () => {
+          /* if (map[y * 100 + x] == 1) { // 刮刮乐
+            cell.style.backgroundColor = 'black';
+          } */
+          if (mouse) {
+            if (clear) {
+              cell.style.backgroundColor = '';
+              map[y * 100 + x] = 0;
+            } else {
+              cell.style.backgroundColor = 'black';
+              map[y * 100 + x] = 1;
+            }
+          }
+        })
+        fragment.appendChild(cell);
+      }
+    }
+    container.appendChild(fragment);
+  }
+
+  function save() { // 保存图像到缓存
+    let btn = document.getElementById('btn');
+
+    btn.addEventListener('click', () => {
+      localStorage.map = JSON.stringify(map)
+    })
+  }
+
+  function del() {  // 删除缓存
+    let del = document.getElementById('delete');
+
+    del.addEventListener('click', () => {
+      localStorage.clear();
+      location.reload();
+    })
+  }
+
+  save();
+  del();
+  show();
+</script>
+
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>generator</title>
+  <style>
+    * {
+      flex: 0, 0;
+    }
+
+    .box {
+      display: flex;
+      align-items: center;
+    }
+
+    .red, .green, .yellow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100px;
+      height: 100px;
+      margin: 10px;
+      border-radius: 50%;
+      background: gray;
+    }
+
+    .red.light {
+      background: red;
+    }
+
+    .green.light {
+      background: green;
+    }
+
+    .yellow.light {
+      background: yellow;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="box">
+    <div class="green"></div>
+    <div class="yellow"></div>
+    <div class="red"></div>
+  </div>
+</body>
+<script>
+  let light = document.getElementsByClassName('box')[0].children;
+
+  function green() {
+    for(let i = 0; i < light.length; i++) {
+      light[i].classList.remove('light');
+    }
+    light[0].classList.add('light');
+  }
+
+  function yellow() {
+    for(let i = 0; i < light.length; i++) {
+      light[i].classList.remove('light');
+    }
+    light[1].classList.add('light');
+  }
+
+  function red() {
+    for(let i = 0; i < light.length; i++) {
+      light[i].classList.remove('light');
+    }
+    light[2].classList.add('light');
+  }
+
+  function sleep(time = 1) {
+    return new Promise((resolve, reject) => {
+      setTimeout(resolve, time * 1000)
+    })
+  }
+
+  function* go() {
+    green()
+    yield sleep(1);
+    yellow()
+    yield sleep(1)
+    red();
+    yield sleep(1)
+    go()
+  }
+
+  function run(iterator) {
+    let { value, done } = iterator.next();
+    if (done) {
+      return
+    }
+
+    if (value instanceof Promise) {
+      value.then(() => {
+        run(iterator);
+      })
+    }
+  }
+
+  function co(generator) {
+    return function() {
+      return run(generator());
+    }
+  }
+
+  go = co(go);
+</script>
+</html>
