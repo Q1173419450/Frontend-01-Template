@@ -1,5 +1,5 @@
 <script>
-  // 暴力
+  /* 暴力 */
   // function find(source, pattern) {
   //   for (let i = 0; i < source.length; i++) {
   //     let matched = true;
@@ -17,15 +17,55 @@
   //   return false
   // }
 
+  // function find(source, pattern) {
+  //   let j = 0;
+  //   for(let i = 0; i < source.length; i++) {
+  //     if (source[i] == pattern[j]) {
+  //       j ++
+  //     } else {
+  //       j = 0;
+  //       if (source[i] == pattern[j]) {
+  //         j++
+  //       }
+  //     }
+
+  //     if (j === pattern.length) {
+  //       return true
+  //     }
+  //   }
+  //   return false
+  // }
+
+  /* KMP */
   function find(source, pattern) {
+    let table = new Array(pattern.length).fill(0);
+
+    let k = 0;
+
+    for(let j = 1; j < pattern.length; j++) {   // 获取公共字符串
+      if (pattern[j] === pattern[k]) {
+        k ++
+      } else {
+        k = 0;
+      }
+
+      table[j] = k;
+    }
+
     let j = 0;
     for(let i = 0; i < source.length; i++) {
+      console.log(source[i], pattern[j], j);
       if (source[i] == pattern[j]) {
         j ++
       } else {
-        j = 0;
+        while(source[i] !== pattern[j] && j > 0) {  // 回去，回哪去
+          j = table[j - 1];
+        }
+
         if (source[i] == pattern[j]) {
           j++
+        } else {
+          j = 0;
         }
       }
 
@@ -36,5 +76,6 @@
     return false
   }
  
+  console.log(find('aaaaaaaaaaaaaaaaaaax', 'aaax'))
   console.log(find('abcabcabx', 'abcabx'))
 </script>
