@@ -16,8 +16,8 @@
       height: 6px;
       line-height: 6px;
       background-color: gray;
-      /* border-bottom: solid 1px white; */
-      /* border-right: solid 1px white; */
+      border-bottom: solid 1px white;
+      border-right: solid 1px white;
       vertical-align: middle;
     }
 
@@ -131,7 +131,6 @@
   let clear = false;
   document.addEventListener('mousedown', (e) => { // 鼠标左键画图、右键橡皮擦
     // event.which || event.keyCode; // event.keyCode 用于 IE8 及更早版本
-    console.log(e)
     mouse = true
     clear = (e.which === 3)
   });
@@ -154,7 +153,6 @@
           cell.style.backgroundColor = 'black';
         }
         cell.addEventListener('mouseover', (e) => {
-          console.log(e)
           /* if (map[y * 100 + x] == 1) { // 刮刮乐
             cell.style.backgroundColor = 'black';
           } */

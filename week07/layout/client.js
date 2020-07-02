@@ -232,11 +232,14 @@ void async function () {
 
   let dom = parser.parserHTML(response.body);
 
-  let viewport = images(800, 600);
-  console.log(dom.children[0].children[2].children[1].children[1]);
-  render(viewport, dom)
+  console.log('dom---------------------------')
+  console.log(dom)
 
-  viewport.save('viewport.jpg');
+  // let viewport = images(800, 600);
+  // console.log(dom.children[0].children[2].children[1].children[1]);
+  // render(viewport, dom)
+
+  // viewport.save('viewport.jpg');
   // console.log(JSON.stringify(dom));
 }();
 
