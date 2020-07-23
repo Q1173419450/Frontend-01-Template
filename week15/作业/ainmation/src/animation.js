@@ -13,6 +13,7 @@ var Timeline = /** @class */ (function () {
         var _this = this;
         var t = Date.now() - this.startTime;
         var animations = this.animations.filter(function (animation) { return !animation.finished; });
+        console.log(animations);
         for (var _i = 0, animations_1 = animations; _i < animations_1.length; _i++) {
             var animation = animations_1[_i];
             var object = animation.object, property = animation.property, timingFunction = animation.timingFunction, template = animation.template, delay = animation.delay, duration = animation.duration, addTime = animation.addTime;
@@ -86,7 +87,7 @@ exports.Timeline = Timeline;
   * @param property 动画属性
   * @param start 开始位置
   * @param end 结束位置
-  * @param duration 时间周期
+  * @param duration 动画时长
   * @param delay 延迟
   * @param timingFunction 动画方式
   * @param template 位移距离

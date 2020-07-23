@@ -39,8 +39,6 @@ module.exports = function(source, map) {
   let r = `import { create, Text, Wrapper } from './createElement'
   export class Carousel {
     setAttribute(name, value) { //attribute
-      console.log('-------------')
-      console.log(name, value)
       this[name] = value;
     }
 

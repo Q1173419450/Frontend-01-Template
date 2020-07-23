@@ -5,7 +5,6 @@ export class Timeline {
   state: string;
   pauseTime: number;
 
-  
   constructor() {
     this.animations = [];
     this.startTime = 0;
@@ -19,6 +18,7 @@ export class Timeline {
     
     let animations = this.animations.filter(animation => !animation.finished);
 
+    console.log(animations)
 
     for(let animation of animations) {
       let {
@@ -31,7 +31,7 @@ export class Timeline {
         addTime
       } = animation;
 
-      let progression: number = timingFunction((t - delay - (addTime as number)) / duration);
+      let progression = timingFunction((t - delay - (addTime as number)) / duration);
       
       if (t > duration + delay + (addTime as number)) {
         progression = 1;
@@ -146,7 +146,7 @@ type Template = (v: number) => string;
   * @param property 动画属性
   * @param start 开始位置
   * @param end 结束位置
-  * @param duration 时间周期
+  * @param duration 动画时长
   * @param delay 延迟
   * @param timingFunction 动画方式
   * @param template 位移距离
