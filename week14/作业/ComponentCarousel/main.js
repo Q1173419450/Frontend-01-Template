@@ -1,6 +1,5 @@
 import { create, Text, Wrapper } from './createElement'
 
-
 class Carousel {
   constructor(config) {
     this.children = [];
