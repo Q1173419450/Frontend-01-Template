@@ -32,3 +32,6 @@ npm install
   - `\033[<N>C`
 - Move the cursor backward N columns: 之后
   - `\033[<N>D`
+
+[How to change node.js's console font color?](https://stackoverflow.com/questions/9781218/how-to-change-node-jss-console-font-color)
+[hide-terminal-cursor](https://www.npmjs.com/package/hide-terminal-cursor)
