@@ -76,8 +76,6 @@ export class Carousel {
           direction = -1;
         }
 
-        console.log(dx)
-
         timeline.reset();
         timeline.start();
 
