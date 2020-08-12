@@ -1,7 +1,7 @@
 let currentToken = null;
 let currentAttribute = null;
 
-let stack = [{type: "document", children:[]}];
+let stack;
 let currentTextNode = null;
 
 function emit(token){
@@ -17,11 +17,12 @@ function emit(token){
         element.tagName = token.tagName;
 
         for(let p in token) {
-            if(p != "type" || p != "tagName")
+            if(p != "type" || p != "tagName") {
                 element.attributes.push({
                     name: p,
                     value: token[p]
                 });
+            }
         }
 
         top.children.push(element);
@@ -79,17 +80,21 @@ function tagOpen(c){
             tagName : ""
         }
         return tagName(c);
-    } else {
+    } else {    // 没有一个 tag 标签名
+        emit({
+            type: "text",
+            content : "<"
+        });
         emit({
             type: "text",
             content : c
         });
-        return ;
+        return data;
     }
 }
 
 function tagName(c) {
-    if(c.match(/^[\t\n\f ]$/)) {
+    if(c.match(/^[\t\n\f ]$/)) {    // 带属性
         return beforeAttributeName;
     } else if(c == "/") {
         return selfClosingStartTag;
@@ -177,11 +182,11 @@ function singleQuotedAttributeValue(c) {
         
     } else {
         currentAttribute.value += c;
-        return doubleQuotedAttributeValue
+        return singleQuotedAttributeValue
     }
 }
 
-function afterQuotedAttributeValue (c){
+function afterQuotedAttributeValue(c) {
     if(c.match(/^[\t\n\f ]$/)) {
         return beforeAttributeName;
     } else if(c == "/") {
@@ -190,12 +195,13 @@ function afterQuotedAttributeValue (c){
         currentToken[currentAttribute.name] = currentAttribute.value;
         emit(currentToken);
         return data;
-    } else if(c == EOF) {
+    } 
+    // else if(c == EOF) {
         
-    } else {
-        currentAttribute.value += c;
-        return doubleQuotedAttributeValue
-    }
+    // } else {
+    //     currentAttribute.value += c;
+    //     return doubleQuotedAttributeValue
+    // }
 }
 
 
@@ -242,13 +248,14 @@ function endTagOpen(c){
             tagName : ""
         }
         return tagName(c);
-    } else if(c == ">") {
+    } 
+    // else if(c == ">") {
 
-    } else if(c == EOF) {
+    // } else if(c == EOF) {
         
-    } else {
+    // } else {
 
-    }
+    // }
 }
 //in script
 function scriptData(c){
@@ -272,11 +279,11 @@ function scriptDataLessThanSign(c){
             type:"text",
             content:"<"
         });
-        emit({
-            type:"text",
-            content:c
-        });
-        return scriptData;
+        // emit({
+        //     type:"text",
+        //     content:c
+        // });
+        return scriptData(c);
     }
 }
 //in script received </
@@ -294,11 +301,7 @@ function scriptDataEndTagOpen(c){
             content:"/"
         });
 
-        emit({
-            type:"text",
-            content:"c"
-        });
-        return scriptData;
+        return scriptData(c);
     }
 }
 //in script received </s
@@ -310,11 +313,7 @@ function scriptDataEndTagNameS(c){
             type:"text",
             content:"</s"
         });
-        emit({
-            type:"text",
-            content:c
-        });
-        return scriptData;
+        return scriptData(c);
     }
 }
 
@@ -327,11 +326,7 @@ function scriptDataEndTagNameC(c){
             type:"text",
             content:"</sc"
         });
-        emit({
-            type:"text",
-            content:c
-        });
-        return scriptData;
+        return scriptData(c);
     }
 }
 
@@ -344,11 +339,8 @@ function scriptDataEndTagNameR(c){
             type:"text",
             content:"</scr"
         });
-        emit({
-            type:"text",
-            content:c
-        });
-        return scriptData;
+
+        return scriptData(c);
     }
 }
 //in script received </scri
@@ -360,11 +352,7 @@ function scriptDataEndTagNameI(c){
             type:"text",
             content:"</scri"
         });
-        emit({
-            type:"text",
-            content:c
-        });
-        return scriptData;
+        return scriptData(c);
     }
 }
 //in script received </scrip
@@ -376,16 +364,14 @@ function scriptDataEndTagNameP(c){
             type:"text",
             content:"</scrip"
         });
-        emit({
-            type:"text",
-            content:c
-        });
-        return scriptData;
+        return scriptData(c);
     }
 }
 //in script received </script
+let spaces = 0;
 function scriptDataEndTag(c){
     if(c == " ") {
+        spaces++
         return scriptDataEndTag;
     } if(c == ">") {
         emit({
@@ -396,13 +382,9 @@ function scriptDataEndTag(c){
     } else {
         emit({
             type:"text",
-            content:"</script"
+            content:"</script" + new Array(spaces).fill(' ').join('')
         });
-        emit({
-            type:"text",
-            content:c
-        });
-        return scriptData;
+        return scriptData(c);
     }
 }
 
@@ -429,8 +411,9 @@ function afterAttributeName(c) {
     }
 }
 
-module.exports.parseHTML = function parseHTML(html){
+module.exports.parseHTML =  function parseHTML(html){
     let state = data;
+    stack = [{type: "document", children:[]}];
     for(let c of html) {
         state = state(c);
         if(stack[stack.length - 1].tagName === "script" && state == data) {
