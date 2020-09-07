@@ -1,6 +1,8 @@
 import { enableGesture } from './utils/gesture';
 
 export function create(Cls, attributes, ...children) {
+  console.log('-------------')
+  console.log(Cls)
 
   let o;
 
